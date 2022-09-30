@@ -1,16 +1,40 @@
+# import libraries
 import sys
+import pandas as pd
+from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    # load messages dataset
+    messages = pd.read_csv(messages_filepath)
+    # load categories dataset
+    categories = pd.read_csv(categories_filepath)
+    # create a dataframe of the 36 individual category columns
+    categories = categories["categories"].str.split(";", expand=True)
+    # select the first row of the categories dataframe
+    row = categories.loc[0]
+    # extract a list of new column names for categories.
+    category_colnames = [x[:-2] for x in list(row)]
+    # rename the columns of `categories`
+    categories.columns = category_colnames
+    # merge datasets
+    df = pd.merge(messages, categories, on=["id"])
+    # return merged dataset
+    return df
 
 
 def clean_data(df):
-    pass
+    # drop duplicates
+    df.drop_duplicates(subset=["message"], inplace=True)
+    # return cleaned dataset
+    return df
 
 
 def save_data(df, database_filename):
-    pass
+    # Save the clean dataset into an sqlite database
+    engine = create_engine("sqlite:///{}".format(database_filename))
+    df.to_sql("clean_dataset", engine, index=False)
+    return None
 
 
 def main():
