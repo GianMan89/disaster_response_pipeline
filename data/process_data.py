@@ -1,10 +1,19 @@
-# import libraries
+# import modules
 import sys
 import pandas as pd
 from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
+    """
+    Load data from csv files
+
+    Arguments:
+        messages_filepath: path to disaster_messages.csv
+        categories_filepath: path to disaster_categories.csv
+    Output:
+        df: a dataframe containing features
+    """
     # load messages dataset
     messages = pd.read_csv(messages_filepath)
     # load categories dataset
@@ -16,6 +25,15 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    """
+    Clean the dataset by converting the feature values to
+    binary classifications, removing irrelevant columns.
+
+    Arguments:
+        df: a dataframe containing features
+    Output:
+        df: a dataframe containing cleaned features
+    """
     # create a dataframe of the 36 individual category columns
     categories = df["categories"].str.split(";", expand=True)
     # select the first row of the categories dataframe
@@ -44,6 +62,15 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    """
+    Save the cleaned dataset in a SQLite database.
+
+    Arguments:
+        df: a dataframe containing features
+        database_filename: path to the to be saved database
+    Output:
+        None
+    """
     # Save the clean dataset into an sqlite database
     engine = create_engine("sqlite:///{}".format(database_filename))
     df.to_sql("cleaned_dataset", engine, index=False)

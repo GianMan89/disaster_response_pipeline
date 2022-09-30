@@ -1,4 +1,4 @@
-# import libraries
+# import modules
 import sys
 import numpy as np
 import pandas as pd
@@ -15,15 +15,37 @@ from sklearn.metrics import classification_report
 
 
 def load_data(database_filepath):
+    """
+    Load data from SQLite database
+
+    Arguments:
+        database_filepath: path to the SQLite database
+    Output:
+        X: a dataframe containing features
+        Y: a dataframe containing labels for multiple categories
+        category_names: list of category names
+    """
     # load data from database
     engine = create_engine("sqlite:///{}".format(database_filepath))
     df = pd.read_sql_table("cleaned_dataset", engine)
+    # put the messages that are used for classification in X
     X = np.array(df["message"])
+    # put the multiclass classification labels in Y
     Y = np.array(df[df.columns[4:]])
     return (X, Y, df.columns[4:])
 
 
 def build_model():
+    """
+    Build a pipeline for data preprocessing and classification
+    using sklearn's CountVectorizer, TfidfTransformer, and
+    RandomForestClassifier
+
+    Arguments:
+        None
+    Output:
+        model: the build sklearn pipeline
+    """
     model = make_pipeline(
         CountVectorizer(),
         TfidfTransformer(),
@@ -33,18 +55,42 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Evaluate the pipeline on the test set.
+
+    Arguments:
+        model: the build sklearn pipeline
+        X_test: a dataframe containing features for the test set
+        Y_test: a dataframe containing labels for multiple categories
+        for the test set
+        category_names: list of category names
+    Output:
+        None
+    """
+    # predict the classification labels for test set
     Y_pred = model.predict(X_test)
+    # calculate the accuracy over all categories
     accuracy = (Y_pred == Y_test).mean().mean()
-
     print("Average overall accuracy {0:.2f}%".format(accuracy * 100))
-
+    # print the classification report per category
     for i in range(Y_test.shape[1]):
-        print("Model Performance for category '{}':".format(category_names[i]))
+        print("Model performance for category '{}':".format(category_names[i]))
         print(classification_report(Y_test[:, i], Y_pred[:, i]))
+    return None
 
 
 def save_model(model, model_filepath):
+    """
+    Export the trained model to a pickle file.
+
+    Arguments:
+        model: the build sklearn pipeline
+        model_filepath: path to the pickle file
+    Output:
+        None
+    """
     pickle.dump(model, open(model_filepath, "wb"))
+    return None
 
 
 def main():
