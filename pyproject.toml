@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "disaster_response_pipeline"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8,<3.11"
 numpy = "^1.23.3"
 scikit-learn = "^1.1.2"
 pandas = "^1.5.0"
@@ -18,6 +18,8 @@ plotly = "^5.10.0"
 dash = "^2.6.2"
 ipykernel = "^6.16.0"
 SQLAlchemy = "^1.4.41"
+keras = "^2.10.0"
+nltk = "^3.7"
 
 
 [build-system]
