@@ -4,14 +4,21 @@ import numpy as np
 import pandas as pd
 import pickle
 from sqlalchemy import create_engine
+import nltk
+from nltk import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import RidgeClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
+from sklearn.model_selection import GridSearchCV
+
+nltk.download("punkt")
+nltk.download("wordnet")
+nltk.download("omw-1.4")
 
 
 def load_data(database_filepath):
@@ -35,21 +42,49 @@ def load_data(database_filepath):
     return (X, Y, df.columns[4:])
 
 
+def tokenize(text):
+    """
+    Custom tokenize function using nltk to case normalize, lemmatize,
+    and tokenize text.
+
+    Arguments:
+        text: text message which needs to be tokenized
+    Output:
+        tokens: list of tokens generated from the input text
+    """
+    # Generate a tokenized copy of text
+    tokenized_text = word_tokenize(text)
+    # Lemmatize `text` using WordNet's built-in morphy function
+    lemmatizer = WordNetLemmatizer()
+    # List of case normalized tokens
+    tokens_list = [lemmatizer.lemmatize(i).lower().strip() for i in tokenized_text]
+    return tokens_list
+
+
 def build_model():
     """
     Build a pipeline for data preprocessing and classification
-    using sklearn's CountVectorizer, TfidfTransformer, and
-    RandomForestClassifier
+    using sklearn's CountVectorizer, TfidfTransformer,
+    RidgeClassifier, and GridSearchCV to find the best
+    parameters for the model.
 
     Arguments:
         None
     Output:
         model: the build sklearn pipeline
     """
+    # set the to be searched and tried parameters for the grid search
+    param_grid = {
+        "estimator__alpha": np.logspace(-3, 3, 5),
+    }
+    # build the pipeline
     model = make_pipeline(
-        CountVectorizer(),
+        CountVectorizer(tokenizer=tokenize),
         TfidfTransformer(),
-        MultiOutputClassifier(RandomForestClassifier(n_estimators=10)),
+        GridSearchCV(
+            MultiOutputClassifier(RidgeClassifier()),
+            param_grid,
+        ),
     )
     return model
 
