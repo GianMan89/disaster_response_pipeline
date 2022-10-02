@@ -15,15 +15,22 @@ app = Flask(__name__)
 
 
 def tokenize(text):
-    tokens = word_tokenize(text)
+    """
+    Custom tokenize function using nltk to case normalize, lemmatize,
+    and tokenize text.
+
+    Arguments:
+        text: text message which needs to be tokenized
+    Output:
+        tokens: list of tokens generated from the input text
+    """
+    # Generate a tokenized copy of text
+    tokenized_text = word_tokenize(text)
+    # Lemmatize `text` using WordNet's built-in morphy function
     lemmatizer = WordNetLemmatizer()
-
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
-
-    return clean_tokens
+    # List of case normalized tokens
+    tokens_list = [lemmatizer.lemmatize(i).lower().strip() for i in tokenized_text]
+    return tokens_list
 
 
 # load data
@@ -40,12 +47,12 @@ model = joblib.load("./models/classifier.pkl")
 def index():
 
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby("genre").count()["message"]
     genre_names = list(genre_counts.index)
+    category_counts = (df.iloc[:, 4:] != 0).sum().values
+    category_names = df.iloc[:, 4:].columns
 
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             "data": [Bar(x=genre_names, y=genre_counts)],
@@ -54,7 +61,15 @@ def index():
                 "yaxis": {"title": "Count"},
                 "xaxis": {"title": "Genre"},
             },
-        }
+        },
+        {
+            "data": [Bar(x=category_names, y=category_counts)],
+            "layout": {
+                "title": "Distribution of Message Categories",
+                "yaxis": {"title": "Count"},
+                "xaxis": {"title": "Category", "tickangle": 30},
+            },
+        },
     ]
 
     # encode plotly graphs in JSON
