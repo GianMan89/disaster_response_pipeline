@@ -24,29 +24,29 @@ The project includes a web app where an emergency worker can input a new message
 
 The repository consists of the following folders and files:
 
-    ***app***: contains HTML and Flask files that build and run the web-based API that classifies disaster messages.\n
-    ***data***: contains two csv files: disaster_categories.csv (class labels) and disaster_messages.csv (to be classified disaster messages and tweets), a SQLite database of the cleaned input data: Disasterresponse.db, and a Python script that loads, cleans, and saves the disaster messages and categories into the database, process_data.py.
-    ***models***: a Pickle file of the trained classification model, classifier.pkl, and a Python script that loads, preprocesses, trains, tests, tunes, and saves the classification model. The model consists of a sklearn pipeline for data preprocessing and classification using sklearn CountVectorizer, TfidfTransformer, RandomForestClassifier, and GridSearchCV.
+- ***app***: contains HTML and Flask files that build and run the web-based API that classifies disaster messages.
+- ***data***: contains two csv files: disaster_categories.csv (class labels) and disaster_messages.csv (to be classified disaster messages and tweets), a SQLite database of the cleaned input data: Disasterresponse.db, and a Python script that loads, cleans, and saves the disaster messages and categories into the database, process_data.py.
+- ***models***: a Pickle file of the trained classification model, classifier.pkl, and a Python script that loads, preprocesses, trains, tests, tunes, and saves the classification model. The model consists of a sklearn pipeline for data preprocessing and classification using sklearn CountVectorizer, TfidfTransformer, RandomForestClassifier, and GridSearchCV.
 
 The repository is structured as follows:
 
-app
-| - template
-| |- master.html # main page of web app
-| |- go.html # classification result page of web app
-|- run.py # Flask file that runs app
-data
-|- disaster_categories.csv # labels of the message data
-|- disaster_messages.csv # disaster message data
-|- process_data.py # load, clean, and save data to a SQLite database
-|- DisasterResponse.db # database to save clean data to
-models
-|- train_classifier.py # build, train, test, and save a classification pipeline
-|- classifier.pkl # saved model
-LICENSE # MIT license for this repository
-poetry.lock # log file of all installed Python packages
-pyproject.toml # package summary and dependencies
-README.md
+    app
+    | - template
+    | |- master.html # main page of web app
+    | |- go.html # classification result page of web app
+    |- run.py # Flask file that runs app
+    data
+    |- disaster_categories.csv # labels of the message data
+    |- disaster_messages.csv # disaster message data
+    |- process_data.py # load, clean, and save data to a SQLite database
+    |- DisasterResponse.db # database to save clean data to
+    models
+    |- train_classifier.py # build, train, test, and save a classification pipeline
+    |- classifier.pkl # saved model
+    LICENSE # MIT license for this repository
+    poetry.lock # log file of all installed Python packages
+    pyproject.toml # package summary and dependencies
+    README.md
 
 <a name="instructions"></a>
 ## 3. Instructions:
